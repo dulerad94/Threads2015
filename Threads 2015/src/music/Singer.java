@@ -12,8 +12,7 @@ public class Singer extends Thread {
     
     private String singerName;
     private Voice voice;
-    private Performance performance;
-    
+    private Performance performance;   
     private boolean stopIt;
     private Synchronizer synch;
 
@@ -83,16 +82,17 @@ public class Singer extends Thread {
         int i = 0;
         String line = null;
         
-        while (!stopIt) {
+        while (!stopIt) {	
             if (this.voice == Voice.LEAD) {
                 line = song.pickLine(this.voice, (i % song.getLyrics().size()));
                 synch.singLeadLine(line, delay);
             } else {
                 line = '\t' + song.pickLine(this.voice, (i % song.getLyrics().size() + 1));
                 synch.singBackingLine(line, delay);
-            }
-            i += 2;
+            	}
+            i +=2;
         }
+        
     }
     
     public String getSingerName() {

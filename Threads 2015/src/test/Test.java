@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 
+import music.GuitarSolo;
 import music.Performance;
 import music.Singer;
 import music.Song;
@@ -23,7 +24,7 @@ public class Test {
     private Performance performance;
     private Singer bbk;
     private Singer bono;
-    
+    private GuitarSolo theEdge;
     public Test() {
         // TODO Auto-generated constructor stub
     }
@@ -34,17 +35,28 @@ public class Test {
         lyrics.add("When love comes to town I'm gonna catch that flame.");
         lyrics.add("Maybe I was wrong to ever let you down");
         lyrics.add("But I did what I did before love came to town.");
+        List<String> chords=new ArrayList<String>();
+        chords.add("A");
+        chords.add("     E                                       A");
+        chords.add("E");
+        chords.add("      E");
+        List<String> chordsIntro=new ArrayList<String>();
+        chordsIntro.add("E");
+        chordsIntro.add("A");
+        chordsIntro.add("E");
         
-        song = new Song("When Love Comes to Town", lyrics);
+        
+        song = new Song("When Love Comes to Town", lyrics,chords,3000,chordsIntro);
         performance = new Performance(song, 1000);
         Synchronizer synch = new Synchronizer(true);
         boolean stopIt = false;
         
 //        bbk = new Singer("B.B. King", Voice.LEAD, performance);
 //        bono = new Singer("Bono", Voice.BACKING, performance);
-        
+        theEdge= new GuitarSolo("David Evans",performance, synch);
         bbk = new Singer("B.B. King", Voice.LEAD, performance, stopIt, synch);
         bono = new Singer("Bono", Voice.BACKING, performance, stopIt, synch);
+       
     }
     
     public synchronized void simpleWait() {
@@ -103,8 +115,11 @@ public class Test {
     
     public void testSingWithThreads() {
         initialize();
-        bbk.start();
+        
+        bbk.start();        
         bono.start();
+        theEdge.start();
+        
         
         IN.nextLine();
         bbk.setStopIt(true);

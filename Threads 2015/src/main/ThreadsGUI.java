@@ -96,7 +96,8 @@ public class ThreadsGUI extends JFrame {
 			btnStartSvi.setBounds(7, 7, 103, 23);
 			btnStartSvi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					setRunning(true);					
+					setRunning(true);
+					test.getBbk().getSynch().setOneActive(false);
 					start = new Thread("Start dugme") {
 						public void run() {
 							test.testSingWithThreads();
@@ -128,19 +129,29 @@ public class ThreadsGUI extends JFrame {
 			btnStart.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
 					switch ((String) comboBox.getSelectedItem()) {
-					case "Bono":
-//						test.getBono().setRunning(true);
-						test.testSingOne(test.getBono());
-						break;
-					case "B. B. King":
-//						test.getBbk().setRunning(true);
-						test.testSingOne(test.getBbk());
-						break;
-					case "TheEdge":
-//						test.getTheEdge().setRunning(true);
-						test.testSingOne(test.getTheEdge());
+					case "Bono":{
+						test.getBono().setRunning(true);
+						test.getBbk().getSynch().setOneActive(true);
 						break;
 					}
+					case "B. B. King":{
+						test.getBbk().setRunning(true);
+						test.getBbk().getSynch().setOneActive(true);
+						break;
+					}
+					case "TheEdge":{
+						test.getTheEdge().setRunning(true);
+						test.getBbk().getSynch().setOneActive(true);
+						break;
+					}
+					}				
+					start = new Thread("Start dugme") {
+						public void run() {
+							test.testSingWithThreads();
+						}
+					};
+					start.start();
+					
 
 				}
 			});
@@ -162,7 +173,8 @@ public class ThreadsGUI extends JFrame {
 			btnStopSvi.setBounds(7, 34, 103, 23);
 			btnStopSvi.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
-					setRunning(false);					
+					setRunning(false);	
+					test.getBbk().getSynch().setOneActive(false);
 				}
 			});
 		}
@@ -173,7 +185,6 @@ public class ThreadsGUI extends JFrame {
 		test.getBbk().setRunning(running);
 		test.getBono().setRunning(running);
 		test.getTheEdge().setRunning(running);	
-		test.getBbk().getSynch().setStoped(!running);
 	}
 	
 }

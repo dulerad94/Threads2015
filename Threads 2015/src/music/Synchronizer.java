@@ -14,15 +14,14 @@ public class Synchronizer {
 	private int count;
 	private boolean chordsWritten;
 	private JTextArea textArea;
-	private String text="";
-	private boolean stoped;
-	
-	public boolean isStoped() {
-		return stoped;
+	private boolean oneActive;
+
+	public boolean isOneActive() {
+		return oneActive;
 	}
 
-	public void setStoped(boolean stoped) {
-		this.stoped = stoped;
+	public void setOneActive(boolean oneActive) {
+		this.oneActive = oneActive;
 	}
 
 	public Synchronizer() {
@@ -53,7 +52,7 @@ public class Synchronizer {
 	
 
 	public synchronized void singLeadLine(String leadLine, long delay, Singer singer) {
-		while (!leadLineFlag || !chordsFlag|| stoped) {
+		while (!leadLineFlag || !chordsFlag|| !singer.isRunning()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -65,7 +64,7 @@ public class Synchronizer {
 	}
 
 	public synchronized void singBackingLine(String backingLine, long delay, Singer singer) {
-		while (leadLineFlag || !chordsFlag|| stoped) {
+		while (leadLineFlag || !chordsFlag|| !singer.isRunning()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -97,9 +96,9 @@ public class Synchronizer {
 			textArea.setText(textArea.getText()+line+'\n');
 			chordsWritten=false;
 		}
-		leadLineFlag = !leadLineFlag;		
+		if(!oneActive)	leadLineFlag = !leadLineFlag;		
 		notifyAll();
-		chordsFlag=false;
+		if(!oneActive)	chordsFlag=false;
 		}
 		
 		
@@ -107,7 +106,7 @@ public class Synchronizer {
 	public synchronized void playIntro(String line, long introDuration,
 			long delay,GuitarSolo guitar) {
 		
-		while(stoped){
+		while(!guitar.isRunning()){
 			try {
 				wait(delay);
 				
@@ -121,7 +120,7 @@ public class Synchronizer {
 			count += delay;
 			wait(delay);
 			if (count >= introDuration)
-				introFlag = false;
+					introFlag = false;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -132,7 +131,7 @@ public class Synchronizer {
 
 	public synchronized void play(String line, long delay,GuitarSolo guitar) {
 		
-		while(chordsFlag|| stoped){
+		while(chordsFlag|| !guitar.isRunning()){
 			try {
 				wait(delay);
 				
@@ -143,7 +142,7 @@ public class Synchronizer {
 		}
 		if(guitar.isRunning()){
 		notifyAll();
-		chordsFlag=true;
+		if(!oneActive)	chordsFlag=true;
 		try {
 			wait(delay);
 			
@@ -152,7 +151,7 @@ public class Synchronizer {
 			e.printStackTrace();
 		}			
 		textArea.setText(textArea.getText()+line+'\n');
-		chordsWritten=true;
+		if(!oneActive) chordsWritten=true;
 		notifyAll();
 		}
 		

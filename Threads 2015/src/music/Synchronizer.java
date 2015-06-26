@@ -4,6 +4,8 @@
  */
 package music;
 
+import javax.swing.JTextArea;
+
 public class Synchronizer {
 
 	private boolean leadLineFlag;
@@ -11,12 +13,16 @@ public class Synchronizer {
 	private boolean chordsFlag;
 	private int count;
 	private boolean chordsWritten;
-	public boolean isIntroFlag() {
-		return introFlag;
+	private JTextArea textArea;
+	private String text="";
+	private boolean stoped;
+	
+	public boolean isStoped() {
+		return stoped;
 	}
 
-	public void setIntroFlag(boolean introFlag) {
-		this.introFlag = introFlag;
+	public void setStoped(boolean stoped) {
+		this.stoped = stoped;
 	}
 
 	public Synchronizer() {
@@ -26,9 +32,28 @@ public class Synchronizer {
 		super();
 		this.leadLineFlag = leadLineFlag;
 	}
+	
 
-	public synchronized void singLeadLine(String leadLine, long delay) {
-		while (!leadLineFlag || !chordsFlag) {
+	public JTextArea getTextArea() {
+		return textArea;
+	}
+
+	public void setTextArea(JTextArea textArea) {
+		this.textArea = textArea;
+	}
+
+	public boolean isIntroFlag() {
+		return introFlag;
+	}
+
+	public void setIntroFlag(boolean introFlag) {
+		this.introFlag = introFlag;
+	}
+
+	
+
+	public synchronized void singLeadLine(String leadLine, long delay, Singer singer) {
+		while (!leadLineFlag || !chordsFlag|| stoped) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -36,11 +61,11 @@ public class Synchronizer {
 				e.printStackTrace();
 			}
 		}		
-		singOneLine(leadLine, delay);
+		singOneLine(leadLine, delay,singer);
 	}
 
-	public synchronized void singBackingLine(String backingLine, long delay) {
-		while (leadLineFlag || !chordsFlag) {
+	public synchronized void singBackingLine(String backingLine, long delay, Singer singer) {
+		while (leadLineFlag || !chordsFlag|| stoped) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -48,10 +73,11 @@ public class Synchronizer {
 				e.printStackTrace();
 			}
 		}
-		singOneLine(backingLine, delay);
+		 singOneLine(backingLine, delay, singer );
 	}
 
-	private void singOneLine(String line, long delay) {
+	private void singOneLine(String line, long delay,Singer singer) {
+		if(singer.isRunning()){
 		try {
 			wait(delay);
 		} catch (InterruptedException e) {
@@ -64,35 +90,24 @@ public class Synchronizer {
 				try {
 					wait();
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			}
-			System.out.println(line);
+			textArea.setText(textArea.getText()+line+'\n');
 			chordsWritten=false;
 		}
 		leadLineFlag = !leadLineFlag;		
 		notifyAll();
 		chordsFlag=false;
+		}
 		
 		
 	}
 	public synchronized void playIntro(String line, long introDuration,
-			long delay) {
-
-		try {
-			count += delay;
-			wait(delay);
-			if (count >= introDuration)
-				introFlag = false;
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		System.out.println(line);
-	}
-
-	public synchronized void play(String line, long delay) {
-		while(chordsFlag){
+			long delay,GuitarSolo guitar) {
+		
+		while(stoped){
 			try {
 				wait(delay);
 				
@@ -101,20 +116,46 @@ public class Synchronizer {
 				e.printStackTrace();
 			}
 		}
+		if (guitar.isRunning()){
+		try {
+			count += delay;
+			wait(delay);
+			if (count >= introDuration)
+				introFlag = false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+		textArea.setText(textArea.getText()+line+'\n');
+		}
+	}
+
+	public synchronized void play(String line, long delay,GuitarSolo guitar) {
+		
+		while(chordsFlag|| stoped){
+			try {
+				wait(delay);
+				
+			} catch (InterruptedException e) {
+			
+				e.printStackTrace();
+			}
+		}
+		if(guitar.isRunning()){
 		notifyAll();
-		chordsFlag=true;		
+		chordsFlag=true;
 		try {
 			wait(delay);
 			
 		} catch (InterruptedException e) {
 			
 			e.printStackTrace();
-		}		
-		
-		System.out.println(line);		
+		}			
+		textArea.setText(textArea.getText()+line+'\n');
 		chordsWritten=true;
 		notifyAll();
+		}
+		
 	}
-	
 }
 

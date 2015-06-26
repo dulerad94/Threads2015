@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 
+import main.ThreadsGUI;
 import music.GuitarSolo;
 import music.Performance;
 import music.Singer;
@@ -25,8 +26,33 @@ public class Test {
     private Singer bbk;
     private Singer bono;
     private GuitarSolo theEdge;
-    public Test() {
-        // TODO Auto-generated constructor stub
+    
+    public Singer getBbk() {
+		return bbk;
+	}
+
+	public void setBbk(Singer bbk) {
+		this.bbk = bbk;
+	}
+
+	public Singer getBono() {
+		return bono;
+	}
+
+	public void setBono(Singer bono) {
+		this.bono = bono;
+	}
+
+	public GuitarSolo getTheEdge() {
+		return theEdge;
+	}
+
+	public void setTheEdge(GuitarSolo theEdge) {
+		this.theEdge = theEdge;
+	}
+
+	public Test() {
+        initialize();
     }
     
     public void initialize() {
@@ -49,13 +75,13 @@ public class Test {
         song = new Song("When Love Comes to Town", lyrics,chords,3000,chordsIntro);
         performance = new Performance(song, 1000);
         Synchronizer synch = new Synchronizer(true);
-        boolean stopIt = false;
+      
         
 //        bbk = new Singer("B.B. King", Voice.LEAD, performance);
 //        bono = new Singer("Bono", Voice.BACKING, performance);
         theEdge= new GuitarSolo("David Evans",performance, synch);
-        bbk = new Singer("B.B. King", Voice.LEAD, performance, stopIt, synch);
-        bono = new Singer("Bono", Voice.BACKING, performance, stopIt, synch);
+        bbk = new Singer("B.B. King", Voice.LEAD, performance, synch);
+        bono = new Singer("Bono", Voice.BACKING, performance, synch);
        
     }
     
@@ -114,16 +140,16 @@ public class Test {
     }
     
     public void testSingWithThreads() {
-        initialize();
+     //   initialize();
         
         bbk.start();        
         bono.start();
         theEdge.start();
         
-        
-        IN.nextLine();
-        bbk.setStopIt(true);
-        bono.setStopIt(true);
+               
+    }
+    public void testSingOne(Thread performer){
+    	performer.start(); 	
     }
 
 }

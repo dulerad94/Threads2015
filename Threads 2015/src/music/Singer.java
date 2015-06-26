@@ -8,33 +8,37 @@ import java.util.Timer;
 
 import test.ShoutTimerTask;
 
-public class Singer extends Thread {
+public class Singer extends Thread{
     
     private String singerName;
     private Voice voice;
     private Performance performance;   
-    private boolean stopIt;
     private Synchronizer synch;
+    private boolean running=true;
+    
+    
 
-    public Singer() {
+	public Singer() {
         super();
+        
     }
     
     public Singer(String singerName, Voice voice, Performance performance) {
-        super();
+        super(singerName);
         this.singerName = singerName;
         this.voice = voice;
         this.performance = performance;
+       
     }
 
     public Singer(String singerName, Voice voice, Performance performance,
-            boolean stopIt, Synchronizer synch) {
+             Synchronizer synch) {
         super();
         this.singerName = singerName;
         this.voice = voice;
-        this.performance = performance;
-        this.stopIt = stopIt;
+        this.performance = performance;    
         this.synch = synch;
+        
     }
 
     public void sing(Song song, int noOfRepetitions) {
@@ -70,8 +74,8 @@ public class Singer extends Thread {
     }
     
     @Override
-    public void run() {
-        sing();
+    public void run() {  		
+    			sing();		
     }
     
     public synchronized void sing() {
@@ -82,13 +86,13 @@ public class Singer extends Thread {
         int i = 0;
         String line = null;
         
-        while (!stopIt) {	
+        while (true) {	
             if (this.voice == Voice.LEAD) {
                 line = song.pickLine(this.voice, (i % song.getLyrics().size()));
-                synch.singLeadLine(line, delay);
+                synch.singLeadLine(line, delay,this);
             } else {
                 line = '\t' + song.pickLine(this.voice, (i % song.getLyrics().size() + 1));
-                synch.singBackingLine(line, delay);
+                synch.singBackingLine(line, delay,this);
             	}
             i +=2;
         }
@@ -119,14 +123,6 @@ public class Singer extends Thread {
         this.performance = performance;
     }
 
-    public boolean isStopIt() {
-        return stopIt;
-    }
-
-    public void setStopIt(boolean stopIt) {
-        this.stopIt = stopIt;
-    }
-
     public Synchronizer getSynch() {
         return synch;
     }
@@ -134,5 +130,12 @@ public class Singer extends Thread {
     public void setSynch(Synchronizer synch) {
         this.synch = synch;
     }
+    public boolean isRunning() {
+		return running;
+	}
 
+	public void setRunning(boolean running) {
+		this.running = running;
+		
+	}
 }

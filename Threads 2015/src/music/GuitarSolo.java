@@ -44,16 +44,15 @@ public class GuitarSolo extends Thread{
 	}
 	@Override
 	public void run() {
-		play();
-			
+		play();		
 	}
 	private synchronized void play(){
 		Song song=this.performance.getSong();
 		long delay=this.performance.getDelay();
-		
+
 		int i = 0;
         String chords = null;
-        
+        while(true){
         while (synch.isIntroFlag()) {
         	
                 chords = song.pickChordLine( (i % song.getChordsIntro().size()),song.getChordsIntro());            
@@ -72,5 +71,6 @@ public class GuitarSolo extends Thread{
                 i++;
             }  
         }
+	}
 }
 	

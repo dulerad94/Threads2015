@@ -75,7 +75,7 @@ public class Singer extends Thread{
     
     @Override
     public void run() {  		
-    			sing();		
+    	sing();		
     }
     
     public synchronized void sing() {

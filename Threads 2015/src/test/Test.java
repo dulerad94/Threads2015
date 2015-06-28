@@ -148,8 +148,5 @@ public class Test {
         
                
     }
-    public void testSingOne(Thread performer){
-    	performer.start(); 	
-    }
 
 }

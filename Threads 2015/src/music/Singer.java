@@ -33,7 +33,7 @@ public class Singer extends Thread{
 
     public Singer(String singerName, Voice voice, Performance performance,
              Synchronizer synch) {
-        super();
+        super(singerName);
         this.singerName = singerName;
         this.voice = voice;
         this.performance = performance;    

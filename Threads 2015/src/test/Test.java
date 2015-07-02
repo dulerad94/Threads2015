@@ -141,7 +141,6 @@ public class Test {
     
     public void testSingWithThreads() {
      //   initialize();
-        
         bbk.start();        
         bono.start();
         theEdge.start();

@@ -225,8 +225,9 @@ public class ThreadsGUI extends JFrame {
 		if (btnRestart == null) {
 			btnRestart = new JButton("RESTART");
 			btnRestart.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-					setUp();
+				public void actionPerformed(ActionEvent e) {				
+						setUp();
+					
 				}
 			});
 			btnRestart.setBounds(7, 256, 103, 23);
@@ -250,8 +251,31 @@ public class ThreadsGUI extends JFrame {
 		synch.setChordsFlag(!play);
 		synch.setOneActive(play);
 	}
-	private synchronized void setUp(){
-		if(test!=null) setRunning(false);
+	private synchronized void setUp() {
+		if(test!=null) {
+			setRunning(false);	
+			Thread stop=new Thread(){
+				public void run() {
+					try {
+						test.getBbk().sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();;
+					}
+					try {
+						test.getBono().sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+					try {
+						test.getTheEdge().sleep(1000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+					}
+				}
+			};
+			stop.start();
+			
+		}
 		test = new Test();
 		synch=test.getBbk().getSynch();
 		try {
